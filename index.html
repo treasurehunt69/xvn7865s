@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MGIT Treasure Hunt</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Poppins:wght@300;400;500;600&display=swap');
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Poppins', sans-serif;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(139, 69, 19, 0.25), transparent 30%),
+        radial-gradient(circle at 80% 80%, rgba(218, 165, 32, 0.15), transparent 30%),
+        linear-gradient(135deg, #180b0b, #3a1111 50%, #160707);
+      color: #f5e6c8;
+      overflow: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      width: 600px;
+      height: 600px;
+      border: 1px solid rgba(212, 175, 55, 0.12);
+      border-radius: 50%;
+      top: -250px;
+      left: -250px;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      width: 500px;
+      height: 500px;
+      border: 1px solid rgba(212, 175, 55, 0.12);
+      border-radius: 50%;
+      bottom: -250px;
+      right: -200px;
+    }
+
+    .container {
+      width: 92%;
+      max-width: 550px;
+      background: rgba(35, 12, 12, 0.94);
+      border: 1px solid rgba(212, 175, 55, 0.55);
+      border-radius: 20px;
+      padding: 45px 35px;
+      text-align: center;
+      box-shadow: 0 0 25px rgba(212, 175, 55, 0.12), 0 20px 60px rgba(0, 0, 0, 0.6);
+      position: relative;
+      z-index: 2;
+    }
+
+    .container::before,
+    .container::after {
+      content: "";
+      position: absolute;
+      width: 35px;
+      height: 35px;
+      border-color: #d4af37;
+      border-style: solid;
+    }
+
+    .container::before {
+      top: 15px;
+      left: 15px;
+      border-width: 2px 0 0 2px;
+      border-radius: 8px 0 0 0;
+    }
+
+    .container::after {
+      bottom: 15px;
+      right: 15px;
+      border-width: 0 2px 2px 0;
+      border-radius: 0 0 8px 0;
+    }
+
+    .logo {
+      font-family: 'Cinzel', serif;
+      font-size: 18px;
+      letter-spacing: 4px;
+      color: #d4af37;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .subtitle {
+      font-size: 12px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #bcae99;
+      margin-bottom: 30px;
+    }
+
+    .compass {
+      font-size: 48px;
+      color: #d4af37;
+      margin-bottom: 15px;
+      text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+    }
+
+    h1 {
+      font-family: 'Cinzel', serif;
+      font-size: 30px;
+      letter-spacing: 2px;
+      margin: 5px 0 10px;
+      color: #f1d58a;
+    }
+
+    .instruction {
+      color: #c9bba5;
+      font-size: 14px;
+      margin-bottom: 25px;
+    }
+
+    input {
+      width: 100%;
+      padding: 15px;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(212, 175, 55, 0.4);
+      border-radius: 10px;
+      color: #fff2cf;
+      font-size: 16px;
+      text-align: center;
+      outline: none;
+      transition: 0.3s;
+    }
+
+    input::placeholder {
+      color: #8f8170;
+    }
+
+    input:focus {
+      border-color: #d4af37;
+      box-shadow: 0 0 12px rgba(212, 175, 55, 0.25);
+    }
+
+    button {
+      width: 100%;
+      margin-top: 15px;
+      padding: 15px;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #8b1e1e, #5c1010);
+      color: #f5d98b;
+      font-family: 'Cinzel', serif;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      cursor: pointer;
+      border: 1px solid rgba(212, 175, 55, 0.5);
+      transition: 0.3s;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      background: linear-gradient(135deg, #a52626, #701515);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4), 0 0 15px rgba(212, 175, 55, 0.15);
+    }
+
+    #error {
+      display: none;
+      color: #e57373;
+      font-size: 13px;
+      margin-top: 15px;
+    }
+
+    #message {
+      display: none;
+    }
+
+    .success-icon {
+      font-size: 45px;
+      margin-bottom: 10px;
+    }
+
+    .success-title {
+      font-family: 'Cinzel', serif;
+      color: #d4af37;
+      font-size: 25px;
+      letter-spacing: 2px;
+      margin-bottom: 25px;
+    }
+
+    .clue-box {
+      background: linear-gradient(rgba(255,255,255,0.02), rgba(255,255,255,0.02));
+      border-left: 3px solid #d4af37;
+      border-right: 3px solid #d4af37;
+      padding: 25px 20px;
+      border-radius: 8px;
+      margin-bottom: 25px;
+    }
+
+    .clue {
+      font-family: 'Cinzel', serif;
+      font-size: 19px;
+      line-height: 1.8;
+      color: #f3e3c0;
+      margin: 0;
+    }
+
+    .next-box {
+      padding: 18px;
+      background: rgba(139, 30, 30, 0.25);
+      border: 1px solid rgba(212, 175, 55, 0.35);
+      border-radius: 10px;
+    }
+
+    .next-label {
+      font-size: 11px;
+      letter-spacing: 3px;
+      color: #a99a85;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .next-password {
+      font-family: 'Cinzel', serif;
+      font-size: 21px;
+      font-weight: 600;
+      color: #d4af37;
+      letter-spacing: 1px;
+      margin: 0;
+      text-transform: none;
+    }
+
+    .footer {
+      margin-top: 28px;
+      font-size: 10px;
+      letter-spacing: 2px;
+      color: #74695c;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 500px) {
+      .container {
+        padding: 35px 22px;
+      }
+      h1 {
+        font-size: 25px;
+      }
+      .clue {
+        font-size: 17px;
+      }
+      .next-password {
+        font-family: 'Cinzel', serif;
+        font-size: 21px;
+        font-weight: 600;
+        color: #d4af37;
+        letter-spacing: 1px;
+        margin: 0;
+        text-transform: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <div id="login">
+      <div class="logo">MGIT</div>
+      <div class="subtitle">Treasure Hunt 2026</div>
+      <div class="compass">◈</div>
+      <h1>THE JOURNEY BEGINS</h1>
+      <p class="instruction">
+        You have discovered a hidden clue.<br>
+        Enter the password to unlock it.
+      </p>
+      <input type="password" id="password" placeholder="Enter secret password" autocomplete="off">
+      <button onclick="checkPassword()">UNLOCK CLUE</button>
+      <p id="error">✦ Wrong password. The trail remains hidden...</p>
+      <div class="footer">Mahatma Gandhi Institute / MGIT Treasure Hunt</div>
+    </div>
+
+ 
+    <div id="message">
+      <div class="logo">MGIT</div>
+      <div class="subtitle">Treasure Hunt 2026</div>
+      <div class="success-icon">🗝️</div>
+      <div class="success-title">CLUE UNLOCKED</div>
+      <div class="clue-box">
+        <p class="clue">
+          <img src="/image.png" alt="Treasure Hunt GIF" style="width: 100%; border-radius: 8px; margin-bottom: 15px;">
+        </p>
+      </div>
+      <div class="next-box">
+        <div class="next-label">Password for the next QR</div>
+        <p class="next-password" id="nextPasswordDisplay">—</p>
+      </div>
+      <div class="footer">Follow the trail • Find the next QR • Continue the hunt</div>
+    </div>
+  </div>
+
+  <script>
+    // Calls our Vercel serverless function — passwords live on the server, not here
+    async function checkPassword() {
+      const entered = document.getElementById("password").value;
+      const errorEl = document.getElementById("error");
+
+      try {
+        const res = await fetch("/api/verify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ password: entered }),
+        });
+        const data = await res.json();
+
+        if (data.ok) {
+          document.getElementById("login").style.display = "none";
+          document.getElementById("message").style.display = "block";
+          document.getElementById("nextPasswordDisplay").textContent = data.next;
+          errorEl.style.display = "none";
+        } else {
+          errorEl.style.display = "block";
+        }
+      } catch (e) {
+        errorEl.textContent = "✦ Connection error. Try again.";
+        errorEl.style.display = "block";
+      }
+    }
+
+    document.getElementById("password").addEventListener("keypress", (e) => {
+      if (e.key === "Enter") checkPassword();
+    });
+  </script>
+
+
+</body>
+</html>
